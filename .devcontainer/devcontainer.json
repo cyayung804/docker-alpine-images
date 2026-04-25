@@ -1,0 +1,14 @@
+{
+    "name": "docker-alpine-images",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    },
+    "containerUser": "root",
+    "runArgs": [
+        "--privileged"
+    ],
+    "postStartCommand": "/usr/local/bin/entrypoint.sh",
+    "workspaceMount": "source=${localWorkspaceFolder}/,target=/workspaces/docker-alpine-images,type=bind,consistency=cached",
+    "workspaceFolder": "/workspaces"
+}

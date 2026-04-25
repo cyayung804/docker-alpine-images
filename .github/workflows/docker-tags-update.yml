@@ -1,0 +1,35 @@
+---
+name: Docker tags update
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 00:00 UTC is 08:00 SGT
+    # 12:00 UTC is 20:00 SGT
+    - cron: '0 0,12 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  docker-tags-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run bash script
+        run: |
+          make install
+          for dir in src/*/; do
+            make update image=$(basename "$dir")
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "cyayung804@gmail.com"
+          git config --local user.name "cyayung804"
+          git add -A
+          git commit -m "Scheduled file updates: Run update.sh" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
