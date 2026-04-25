@@ -1,1 +1,1 @@
-# docker-alpine-images
+Alpine images

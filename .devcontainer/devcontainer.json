@@ -1,0 +1,11 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "."
+    },
+    "containerUser": "root",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "workspaceMount": "source=${localWorkspaceFolder}/,target=/root/docker-alpine-images,type=bind,consistency=cached", "workspaceFolder": "/root"
+}
