@@ -2,13 +2,18 @@
 name: Docker build alpine
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/alpine/.alpine-version'
   workflow_dispatch:
 
 env:
   TZ: "Asia/Singapore"
 
 jobs:
-  docker-build-alpine:
+  docker-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,6 +31,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Docker build alpine
+      - name: Docker build all tags
+        if: github.event_name == 'workflow_dispatch'
         run: |
+          make install
           make build_all image=alpine
+
+      - name: Docker build latest
+        if: github.event_name == 'push'
+        run: |
+          make install
+          make build image=alpine

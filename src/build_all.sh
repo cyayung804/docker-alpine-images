@@ -41,7 +41,7 @@ function alpine()
 
     done < <(echo "${latest_versions}")
 
-    latest_version="$(cat .alpine-versions)"
+    latest_version="$(cat .alpine-version)"
     export IMAGE_TAG="${latest_version}"
     export ALPINE_VERSION="${latest_version}"
 
