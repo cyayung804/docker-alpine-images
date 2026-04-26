@@ -9,6 +9,9 @@ function alpine()
     local image_registry="docker.io/cyayung804"
     local image_name="alpine"
 
+    export IMAGE_REGISTRY="${image_registry}"
+    export IMAGE_NAME="${image_name}"
+
     echo "  -> Initializing ${FUNCNAME}..."
 
     cd "src/${image_name}" || return
