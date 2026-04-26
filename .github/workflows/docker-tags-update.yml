@@ -2,9 +2,6 @@
 name: Docker tags update
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
   schedule:
     # 23:00 UTC is 7am SGT | 11:00 UTC is 7pm SGT

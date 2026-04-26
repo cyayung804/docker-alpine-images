@@ -6,7 +6,7 @@ echo "==> Running $(dirname "$(realpath "$0")")/build_all.sh"
 
 function alpine()
 {
-    local image_registry="public.ecr.aws/docker/library"
+    local image_registry="docker.io/cyayung804"
     local image_name="alpine"
 
     echo "  -> Initializing ${FUNCNAME}..."
