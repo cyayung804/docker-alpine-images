@@ -26,8 +26,8 @@ function alpine()
     while read -r IMAGE_TAG; do
         image_uri="${image_registry}/${image_name}:${IMAGE_TAG}"
 
-        if crane manifest "$image_uri" > /dev/null 2>&1; then
-            echo "  [~] Skipping: ${image_uri} already exists."
+        if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_repo}" | grep -Fxq "${IMAGE_TAG}"; then
+            echo "  [~] Skipping: ${image_repo}:${IMAGE_TAG} already exists."
             continue
         fi
 
@@ -40,6 +40,18 @@ function alpine()
         docker buildx bake push
 
     done < <(echo "${latest_versions}")
+
+    latest_version="$(cat .alpine-versions)"
+    export IMAGE_TAG="${latest_version}"
+    export ALPINE_VERSION="${latest_version}"
+
+    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_repo}" | grep -Fxq "${IMAGE_TAG}"; then
+        echo "  [~] Skipping: ${image_repo}:${IMAGE_TAG} already exists."
+        continue
+    fi
+
+    echo "Building ${image_uri}..."
+    docker buildx bake push
 }
 
 function all()
