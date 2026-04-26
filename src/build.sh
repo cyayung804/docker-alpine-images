@@ -2,7 +2,7 @@
 
 set -e
 
-echo "==> Running $(dirname "$(realpath "$0")")/build_all.sh"
+echo "==> Running $(dirname "$(realpath "$0")")/build.sh"
 
 function alpine()
 {
@@ -20,12 +20,12 @@ function alpine()
     export IMAGE_TAG="${latest_version}"
     export ALPINE_VERSION="${latest_version}"
 
-    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_repo}" | grep -Fxq "${IMAGE_TAG}"; then
-        echo "  [~] Skipping: ${image_repo}:${IMAGE_TAG} already exists."
+    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
+        echo "  [~] Skipping: ${IMAGE_TAG} already exists."
         continue
     fi
 
-    echo "Building ${image_uri}..."
+    echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
     docker buildx bake push
 }
 
