@@ -14,7 +14,7 @@ function alpine()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_version}" | head -n 50 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
@@ -37,7 +37,7 @@ function golang()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 50 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
@@ -53,10 +53,68 @@ function golang()
     cat .go-versions.txt
 }
 
+function node()
+{
+    local image_registry="public.ecr.aws/docker/library"
+    local image_name="node"
+    local count=0
+    echo "  -> Initializing ${FUNCNAME}..."
+
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+        count=$((count + 1))
+        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        sleep 5
+    done
+    latest_version="$(echo "${latest_versions}" | head -n 1)"
+
+    echo "Updating latest ${image_name} version..."
+    echo "${latest_version}" > .node-version
+    cat .node-version
+
+    echo "Exporting all other ${image_name} versions..."
+    echo "$(echo "${latest_versions}" | tail -n +2)" > .node-versions.txt
+    cat .node-versions.txt
+}
+
+function python()
+{
+    local image_registry="public.ecr.aws/docker/library"
+    local image_name="python"
+    local count=0
+    echo "  -> Initializing ${FUNCNAME}..."
+
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+        count=$((count + 1))
+        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        sleep 5
+    done
+    latest_version="$(echo "${latest_versions}" | head -n 1)"
+
+    echo "Updating latest ${image_name} version..."
+    echo "${latest_version}" > .python-version
+    cat .python-version
+
+    echo "Exporting all other ${image_name} versions..."
+    echo "$(echo "${latest_versions}" | tail -n +2)" > .python-versions.txt
+    cat .python-versions.txt
+}
+
+function terraform()
+{
+    local count=0
+    echo "  -> Initializing ${FUNCNAME}..."
+
+    touch .terraform-version
+    cat .terraform-version
+    touch .terraform-versions.txt
+    cat .terraform-versions.txt
+}
+
 function run()
 {
     local target="$1"
 
+    echo "==> Updating ${target}..."
     cd "src/${target}" || exit 1
 
     case "$target" in
@@ -64,8 +122,20 @@ function run()
             alpine
             ;;
         golang)
-            alpine
             golang
+            alpine
+            ;;
+        node)
+            node
+            alpine
+            ;;
+        python)
+            python
+            alpine
+            ;;
+        terraform)
+            terraform
+            alpine
             ;;
         *)
             echo "Unknown target: $target"
