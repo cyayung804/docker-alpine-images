@@ -24,7 +24,7 @@ jobs:
         run: |
           make install
           for dir in src/*/; do
-            make update image=$dir
+            make update image=$(basename "$dir")
           done
 
       - name: Import GPG key
