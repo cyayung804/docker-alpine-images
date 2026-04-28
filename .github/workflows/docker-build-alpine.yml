@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/alpine/**'
+      - 'src/alpine/.alpine-version'
   workflow_dispatch:
 
 env:
