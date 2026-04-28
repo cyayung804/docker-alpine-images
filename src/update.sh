@@ -14,8 +14,9 @@ function alpine()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions="$(crane ls "${image_registry}/${image_name}" | grep -E "${regex_minor_version}" | head -n 50 | sort -Vr)" || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_version}" | head -n 50 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
+        echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
     latest_version="$(echo "${latest_versions}" | head -n 1)"
@@ -36,8 +37,9 @@ function golang()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions="$(crane ls "${image_registry}/${image_name}" | grep -E "${regex_major_version}" | head -n 50 | sort -Vr)" || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 50 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
+        echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
     latest_version="$(echo "${latest_versions}" | head -n 1)"
