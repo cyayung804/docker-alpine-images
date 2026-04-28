@@ -23,7 +23,9 @@ jobs:
       - name: Run bash script
         run: |
           make install
-          make update image=alpine
+          for dir in src/*/; do
+            make update image=$dir
+          done
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v7
