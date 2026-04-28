@@ -13,11 +13,6 @@ function install_deps()
 {
     echo "  -> Initializing ${FUNCNAME}..."
 
-    if ! grep -qi "ubuntu" /etc/os-release; then
-        echo "  [!] Error: This script is intended for Ubuntu only."
-        exit 1
-    fi
-
     $(which sudo) apt-get update
     $(which sudo) apt-get install -y curl git gzip tar make
 }

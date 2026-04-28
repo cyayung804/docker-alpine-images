@@ -1,15 +1,16 @@
 # Makefile for docker-alpine-images
 
-.PHONY: help install update build
+.PHONY: help install update build build_all
 
 
 help:
 	@echo "Makefile for docker-alpine-images"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make install             - Install dependencies"
-	@echo "  make update image=<src>  - Update image tags"
-	@echo "  make build               - Build and push"
+	@echo "  make install                 - Install dependencies"
+	@echo "  make update image=<src>      - Update image tags"
+	@echo "  make build image=<src>       - Build image"
+	@echo "  make build-all image=<src>   - Build images"
 
 
 install:
@@ -26,6 +27,6 @@ build:
 	@chmod +x src/build.sh
 	@bash src/build.sh $(image)
 
-build_all:
+build-all:
 	@chmod +x src/build_all.sh
 	@bash src/build_all.sh $(image)

@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/alpine/.alpine-version'
+      - 'src/alpine/**'
   workflow_dispatch:
 
 env:
@@ -35,7 +35,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           make install
-          make build_all image=alpine
+          make build-all image=alpine
 
       - name: Docker build latest
         if: github.event_name == 'push'
