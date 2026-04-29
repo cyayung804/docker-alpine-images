@@ -47,4 +47,48 @@ function alpine()
     fi
 }
 
+function golang()
+{
+    local image_registry="index.docker.io/cyayung804"
+    local image_name="go"
+
+    echo "  -> Initializing ${FUNCNAME}..."
+
+    export IMAGE_REGISTRY="${image_registry}"
+    export IMAGE_NAME="${image_name}"
+
+    cd "src/${image_name}" || return
+
+    export alpine_version=$(cat .alpine-version) # run latest alpine
+
+    latest_versions="$(cat .go-versions.txt | head -n +56 |sort -V)" # index head -n +56 rebuild
+    while read -r IMAGE_TAG; do
+
+        if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
+            echo "  [~] Skipping: ${IMAGE_TAG} already exists."
+            continue
+        fi
+
+        export ALPINE_VERSION="${alpine_version}"
+        export GO_VERSION="${IMAGE_TAG}"
+        export IMAGE_TAG="${IMAGE_TAG}"
+
+        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
+        docker buildx bake push
+
+    done < <(echo "${latest_versions}")
+
+    latest_version="$(cat .go-version)"
+    export ALPINE_VERSION="${alpine_version}"
+    export GO_VERSION="${latest_version}"
+    export IMAGE_TAG="${latest_version}"
+
+    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
+        echo "  [~] Skipping: ${IMAGE_TAG} already exists."
+    else
+        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
+        docker buildx bake push
+    fi
+}
+
 "$@"
