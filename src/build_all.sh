@@ -50,7 +50,7 @@ function alpine()
 function golang()
 {
     local image_registry="index.docker.io/cyayung804"
-    local image_name="go"
+    local image_name="golang"
 
     echo "  -> Initializing ${FUNCNAME}..."
 
