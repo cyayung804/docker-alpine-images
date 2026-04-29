@@ -22,14 +22,10 @@ ENV PATH="${PATH}:/go/bin:/usr/local/go/bin"
 
 RUN apk add --no-cache make tzdata
 
-WORKDIR /go
-
 FROM base AS build
 
-ARG go_version
-
 RUN apk add --no-cache curl gzip tar \
-    && go_package="go${GO_VERSION}.linux-$(case $(uname -m) in x86_64) echo amd64 ;; aarch64) echo arm64 ;; esac).tar.gz" \
+    && go_package="go${go_version}.linux-$(case $(uname -m) in x86_64) echo amd64 ;; aarch64) echo arm64 ;; esac).tar.gz" \
     && curl -fsSL "https://go.dev/dl/${go_package}" -o "/usr/local/${go_package}" \
     && tar -xf "/usr/local/${go_package}" -C /usr/local \
     && mv "/usr/local/${go_package}" /usr/local/go
@@ -37,3 +33,5 @@ RUN apk add --no-cache curl gzip tar \
 FROM base AS final
 
 COPY --from=build /usr/local/go /usr/local/
+
+WORKDIR /go

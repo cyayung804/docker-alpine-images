@@ -30,3 +30,5 @@ RUN curl -fsSL "https://releases.hashicorp.com/terraform/${tf_version}/terraform
 FROM base AS final
 
 COPY --from=build /usr/local/bin/terraform /usr/local/bin
+
+WORKDIR /root

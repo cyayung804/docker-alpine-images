@@ -15,3 +15,5 @@ ENV ALPINE_VERSION="${alpine_version}" \
     TZ="Asia/Singapore"
 
 RUN apk add --no-cache tzdata
+
+WORKDIR /
