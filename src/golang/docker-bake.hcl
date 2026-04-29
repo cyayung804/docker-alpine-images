@@ -31,7 +31,7 @@ target "push" {
 target "settings" {
   args = {
     alpine_version = "${ALPINE_VERSION}"
-    golang_version = "${GO_VERSION}"
+    go_version     = "${GO_VERSION}"
   }
   context    = "."
   dockerfile = "Dockerfile"
