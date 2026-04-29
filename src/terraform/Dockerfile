@@ -22,10 +22,10 @@ FROM base AS build
 
 RUN apk add --no-cache curl unzip
 
-RUN curl -fsSL "https://releases.hashicorp.com/terraform/${tf_version}/terraform_${tf_version}_linux_$(case $(uname -m) in x86_64) echo amd64 ;; aarch64) echo arm64 ;; esac).zip" -o /tmp/terraform.zip \
-    && unzip /tmp/terraform.zip -d /tmp \
-    && cp /tmp/terraform /usr/local/bin/terraform \
-    && chmod +x /usr/local/bin/terraform
+RUN curl -fsSL "https://releases.hashicorp.com/terraform/${tf_version}/terraform_${tf_version}_linux_$(case $(uname -m) in x86_64) echo amd64 ;; aarch64) echo arm64 ;; esac).zip" -o /tmp/terraform.zip && \
+    unzip /tmp/terraform.zip -d /tmp && \
+    cp /tmp/terraform /usr/local/bin/terraform && \
+    chmod +x /usr/local/bin/terraform
 
 FROM base AS final
 
