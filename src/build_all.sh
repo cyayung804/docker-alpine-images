@@ -59,7 +59,7 @@ function golang()
 
     cd "src/${image_name}" || return
 
-    export alpine_version=$(cat .alpine-version) # run latest alpine
+    export ALPINE_VERSION=$(cat .alpine-version) # run latest alpine
 
     latest_versions="$(cat .go-versions.txt | head -n +56 |sort -V)" # index head -n +56 rebuild
     while read -r IMAGE_TAG; do
@@ -69,7 +69,6 @@ function golang()
             continue
         fi
 
-        export ALPINE_VERSION="${alpine_version}"
         export GO_VERSION="${IMAGE_TAG}"
         export IMAGE_TAG="${IMAGE_TAG}"
 
@@ -79,7 +78,6 @@ function golang()
     done < <(echo "${latest_versions}")
 
     latest_version="$(cat .go-version)"
-    export ALPINE_VERSION="${alpine_version}"
     export GO_VERSION="${latest_version}"
     export IMAGE_TAG="${latest_version}"
 
