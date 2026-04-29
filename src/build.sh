@@ -9,7 +9,7 @@ docker buildx version
 
 function alpine()
 {
-    local image_registry="docker.io/cyayung804"
+    local image_registry="index.docker.io/cyayung804"
     local image_name="alpine"
 
     echo "  -> Initializing ${FUNCNAME}..."

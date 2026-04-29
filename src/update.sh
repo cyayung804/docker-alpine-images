@@ -4,8 +4,9 @@ set -e
 
 echo "==> Running $(dirname "$(realpath "$0")")/update.sh"
 
-regex_minor_version='^[0-9]+\.[0-9]+$'
-regex_major_version='^[0-9]+\.[0-9]+\.[0-9]+$'
+regex_major_semver='^(0|[1-9][0-9]*)$'
+regex_minor_semver='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
+regex_patch_semver='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
 
 function alpine()
 {
@@ -14,7 +15,7 @@ function alpine()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_semver}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
@@ -37,7 +38,7 @@ function golang()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
@@ -60,7 +61,7 @@ function node()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
@@ -83,7 +84,7 @@ function python()
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_major_version}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | head -n 25 | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5

@@ -2,7 +2,7 @@
 
 ARG ubuntu_version=24.04
 
-FROM docker.io/library/ubuntu:${ubuntu_version} AS base
+FROM index.docker.io/library/ubuntu:${ubuntu_version} AS base
 
 USER root
 

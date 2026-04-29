@@ -2,7 +2,7 @@
 
 ARG alpine_version
 
-FROM public.ecr.aws/docker/library/alpine:${alpine_version} AS base
+FROM index.docker.io/library/alpine:${alpine_version} AS base
 
 ARG alpine_version
 
