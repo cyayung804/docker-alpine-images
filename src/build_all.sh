@@ -61,7 +61,7 @@ function golang()
 
     export ALPINE_VERSION=$(cat .alpine-version) # run latest alpine
 
-    latest_versions="$(cat .go-versions.txt | head -n +56 |sort -V)" # index head -n +56 rebuild
+    latest_versions="$(cat .go-versions.txt | head -n +56 | sort -V)" # index head -n +56 rebuild
     while read -r IMAGE_TAG; do
 
         if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
@@ -79,6 +79,48 @@ function golang()
 
     latest_version="$(cat .go-version)"
     export GO_VERSION="${latest_version}"
+    export IMAGE_TAG="${latest_version}"
+
+    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
+        echo "  [~] Skipping: ${IMAGE_TAG} already exists."
+    else
+        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
+        docker buildx bake push
+    fi
+}
+
+function terraform()
+{
+    local image_registry="index.docker.io/cyayung804"
+    local image_name="terraform"
+
+    echo "  -> Initializing ${FUNCNAME}..."
+
+    export IMAGE_REGISTRY="${image_registry}"
+    export IMAGE_NAME="${image_name}"
+
+    cd "src/${image_name}" || return
+
+    export ALPINE_VERSION=$(cat .alpine-version) # run latest alpine
+
+    latest_versions="$(cat .tf-versions.txt | head -n +135 | sort -V)" # index head -n +135 rebuild
+    while read -r IMAGE_TAG; do
+
+        if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
+            echo "  [~] Skipping: ${IMAGE_TAG} already exists."
+            continue
+        fi
+
+        export TF_VERSION="${IMAGE_TAG}"
+        export IMAGE_TAG="${IMAGE_TAG}"
+
+        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
+        docker buildx bake push
+
+    done < <(echo "${latest_versions}")
+
+    latest_version="$(cat .tf-version)"
+    export TF_VERSION="${latest_version}"
     export IMAGE_TAG="${latest_version}"
 
     if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then

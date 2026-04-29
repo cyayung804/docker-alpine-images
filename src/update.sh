@@ -102,13 +102,25 @@ function python()
 
 function terraform()
 {
+    local image_registry="public.ecr.aws"
+    local image_name="hashicorp/terraform"
     local count=0
     echo "  -> Initializing ${FUNCNAME}..."
 
-    touch .terraform-version
-    cat .terraform-version
-    touch .terraform-versions.txt
-    cat .terraform-versions.txt
+    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
+        count=$((count + 1))
+        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        sleep 5
+    done
+    latest_version="$(echo "${latest_versions}" | head -n 1)"
+
+    echo "Updating latest ${image_name} version..."
+    echo "${latest_version}" > .tf-version
+    cat .tf-version
+
+    echo "Exporting all other ${image_name} versions..."
+    echo "$(echo "${latest_versions}" | tail -n +2)" > .tf-versions.txt
+    cat .tf-versions.txt
 }
 
 function run()
