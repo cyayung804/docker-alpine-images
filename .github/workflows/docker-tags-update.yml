@@ -4,21 +4,24 @@ name: Docker tags update
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 8,20 * * *'
-      timezone: "Asia/Singapore"
+    # 00:00 UTC is 08:00 SGT
+    # 12:00 UTC is 20:00 SGT
+    - cron: '0 0,12 * * *'
 
 permissions:
   contents: write
-
-env:
-  TZ: "Asia/Singapore"
 
 jobs:
   docker-tags-update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: crazy-max/ghaction-import-gpg@v7
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
 
       - name: Run bash script
         run: |
@@ -26,14 +29,6 @@ jobs:
           for dir in src/*/; do
             make update image=$(basename "$dir")
           done
-
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v7
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
 
       - name: Commit and push changes
         run: |
