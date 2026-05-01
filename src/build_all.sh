@@ -82,7 +82,7 @@ function terraform()
     local latest_versions
 
     alpine_versions="$(sort -V .alpine-versions.txt)"
-    latest_versions="$(head -n +136 .tf-versions.txt | sort -V)" # index head -n +136 rebuild
+    latest_versions="$(head -n +137 .tf-versions.txt | sort -V)" # index head -n +137 rebuild
 
     for alpine_version in ${alpine_versions}; do
         export ALPINE_VERSION="${alpine_version}"
