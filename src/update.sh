@@ -13,21 +13,16 @@ function alpine()
     local image_registry="public.ecr.aws/docker/library"
     local image_name="alpine"
     local count=0
-    echo "  -> Initializing ${FUNCNAME}..."
-
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
-    latest_version="$(echo "${latest_versions}" | head -n 1)"
-
-    echo "Updating latest ${image_name} version..."
-    echo "${latest_version}" > .alpine-version
+    echo "${latest_versions}" > .alpine-versions.txt
+    cat .alpine-versions.txt | head -n 1 > .alpine-version
+    echo ".alpine-version:"
     cat .alpine-version
-
-    echo "Exporting all other ${image_name} versions..."
-    echo "$(echo "${latest_versions}" | tail -n +2)" > .alpine-versions.txt
+    echo ".alpine-versions.txt:"
     cat .alpine-versions.txt
 }
 
@@ -36,21 +31,16 @@ function golang()
     local image_registry="public.ecr.aws/docker/library"
     local image_name="golang"
     local count=0
-    echo "  -> Initializing ${FUNCNAME}..."
-
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
-    latest_version="$(echo "${latest_versions}" | head -n 1)"
-
-    echo "Updating latest ${image_name} version..."
-    echo "${latest_version}" > .go-version
+    echo "${latest_versions}" > .go-versions.txt
+    cat .go-versions.txt | head -n 1 > .go-version
+    echo ".go-version:"
     cat .go-version
-
-    echo "Exporting all other ${image_name} versions..."
-    echo "$(echo "${latest_versions}" | tail -n +2)" > .go-versions.txt
+    echo ".go-versions.txt:"
     cat .go-versions.txt
 }
 
@@ -59,21 +49,16 @@ function node()
     local image_registry="public.ecr.aws/docker/library"
     local image_name="node"
     local count=0
-    echo "  -> Initializing ${FUNCNAME}..."
-
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
-    latest_version="$(echo "${latest_versions}" | head -n 1)"
-
-    echo "Updating latest ${image_name} version..."
-    echo "${latest_version}" > .node-version
+    echo "${latest_versions}" > .node-versions.txt
+    cat .node-versions.txt | head -n 1 > .node-version
+    echo ".node-version:"
     cat .node-version
-
-    echo "Exporting all other ${image_name} versions..."
-    echo "$(echo "${latest_versions}" | tail -n +2)" > .node-versions.txt
+    echo ".node-versions.txt:"
     cat .node-versions.txt
 }
 
@@ -82,21 +67,16 @@ function python()
     local image_registry="public.ecr.aws/docker/library"
     local image_name="python"
     local count=0
-    echo "  -> Initializing ${FUNCNAME}..."
-
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
-    latest_version="$(echo "${latest_versions}" | head -n 1)"
-
-    echo "Updating latest ${image_name} version..."
-    echo "${latest_version}" > .python-version
+    echo "${latest_versions}" > .python-versions.txt
+    cat .python-versions.txt | head -n 1 > .python-version
+    echo ".python-version:"
     cat .python-version
-
-    echo "Exporting all other ${image_name} versions..."
-    echo "$(echo "${latest_versions}" | tail -n +2)" > .python-versions.txt
+    echo ".python-versions.txt:"
     cat .python-versions.txt
 }
 
@@ -105,21 +85,16 @@ function terraform()
     local image_registry="public.ecr.aws"
     local image_name="hashicorp/terraform"
     local count=0
-    echo "  -> Initializing ${FUNCNAME}..."
-
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
         echo "     Rate limited or empty response. Retrying ($count/5)..."
         sleep 5
     done
-    latest_version="$(echo "${latest_versions}" | head -n 1)"
-
-    echo "Updating latest ${image_name} version..."
-    echo "${latest_version}" > .tf-version
+    echo "${latest_versions}" > .tf-versions.txt
+    cat .tf-versions.txt | head -n 1 > .tf-version
+    echo ".tf-version:"
     cat .tf-version
-
-    echo "Exporting all other ${image_name} versions..."
-    echo "$(echo "${latest_versions}" | tail -n +2)" > .tf-versions.txt
+    echo ".tf-versions.txt:"
     cat .tf-versions.txt
 }
 

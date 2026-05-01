@@ -23,8 +23,8 @@ target "push" {
   platforms = ["linux/amd64", "linux/arm64"]
   tags = [
     "${IMAGE_REGISTRY}/${IMAGE_NAME}:latest",
-    "${IMAGE_REGISTRY}/${IMAGE_NAME}:${GO_VERSION}",
-    "${IMAGE_REGISTRY}/${IMAGE_NAME}:${GO_VERSION}-alpine${ALPINE_VERSION}",
+    "${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}",
+    "${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}-alpine${ALPINE_VERSION}",
   ]
 }
 

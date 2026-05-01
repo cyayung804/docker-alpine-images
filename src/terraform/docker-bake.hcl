@@ -23,6 +23,7 @@ target "push" {
   tags = [
     "${IMAGE_REGISTRY}/${IMAGE_NAME}:latest",
     "${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}",
+    "${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}-alpine${ALPINE_VERSION}",
   ]
 }
 

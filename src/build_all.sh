@@ -12,39 +12,24 @@ function alpine()
     local image_registry="index.docker.io/cyayung804"
     local image_name="alpine"
 
-    echo "  -> Initializing ${FUNCNAME}..."
-
-    export IMAGE_REGISTRY="${image_registry}"
-    export IMAGE_NAME="${image_name}"
-
     cd "src/${image_name}" || return
 
     latest_versions="$(cat .alpine-versions.txt | sort -V)"
-    while read -r IMAGE_TAG; do
 
-        if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
-            echo "  [~] Skipping: ${IMAGE_TAG} already exists."
+    while read -r IMAGE_TAG; do
+        if crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
+            echo "${image_registry}/${image_name}:${IMAGE_TAG} already exists..."
             continue
         fi
 
+        export IMAGE_REGISTRY="${image_registry}"
+        export IMAGE_NAME="${image_name}"
         export IMAGE_TAG="${IMAGE_TAG}"
         export ALPINE_VERSION="${IMAGE_TAG}"
 
         echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
         docker buildx bake push
-
     done < <(echo "${latest_versions}")
-
-    latest_version="$(cat .alpine-version)"
-    export IMAGE_TAG="${latest_version}"
-    export ALPINE_VERSION="${latest_version}"
-
-    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
-        echo "  [~] Skipping: ${IMAGE_TAG} already exists."
-    else
-        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
-        docker buildx bake push
-    fi
 }
 
 function golang()
@@ -52,41 +37,35 @@ function golang()
     local image_registry="index.docker.io/cyayung804"
     local image_name="golang"
 
-    echo "  -> Initializing ${FUNCNAME}..."
+    cd "src/${image_name}" || return
 
     export IMAGE_REGISTRY="${image_registry}"
     export IMAGE_NAME="${image_name}"
 
-    cd "src/${image_name}" || return
+    local alpine_versions
+    local latest_versions
 
-    export ALPINE_VERSION=$(cat .alpine-version) # run latest alpine
+    alpine_versions="$(sort -V .alpine-versions.txt)"
+    latest_versions="$(head -n +57 .go-versions.txt | sort -V)" # index head -n +57 rebuild
 
-    latest_versions="$(cat .go-versions.txt | head -n +56 | sort -V)" # index head -n +56 rebuild
-    while read -r IMAGE_TAG; do
+    for alpine_version in ${alpine_versions}; do
+        export ALPINE_VERSION="${alpine_version}"
 
-        if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
-            echo "  [~] Skipping: ${IMAGE_TAG} already exists."
-            continue
-        fi
+        echo "${latest_versions}" | xargs -r -n 1 -P 4 bash -c '
+            go_version="$1"
+            image_tag="${go_version}-alpine${ALPINE_VERSION}"
 
-        export GO_VERSION="${IMAGE_TAG}"
-        export IMAGE_TAG="${IMAGE_TAG}"
+            if crane ls "${IMAGE_REGISTRY}/${IMAGE_NAME}" | grep -Fxq "${image_tag}"; then
+                echo "${IMAGE_REGISTRY}/${IMAGE_NAME}:${image_tag} already exists..."
+                exit 0
+            fi
 
-        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
-        docker buildx bake push
+            export GO_VERSION="${go_version}"
+            export IMAGE_TAG="${go_version}"
 
-    done < <(echo "${latest_versions}")
-
-    latest_version="$(cat .go-version)"
-    export GO_VERSION="${latest_version}"
-    export IMAGE_TAG="${latest_version}"
-
-    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
-        echo "  [~] Skipping: ${IMAGE_TAG} already exists."
-    else
-        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
-        docker buildx bake push
-    fi
+            docker buildx bake push
+        ' _
+    done
 }
 
 function terraform()
@@ -94,41 +73,35 @@ function terraform()
     local image_registry="index.docker.io/cyayung804"
     local image_name="terraform"
 
-    echo "  -> Initializing ${FUNCNAME}..."
+    cd "src/${image_name}" || return
 
     export IMAGE_REGISTRY="${image_registry}"
     export IMAGE_NAME="${image_name}"
 
-    cd "src/${image_name}" || return
+    local alpine_versions
+    local latest_versions
 
-    export ALPINE_VERSION=$(cat .alpine-version) # run latest alpine
+    alpine_versions="$(sort -V .alpine-versions.txt)"
+    latest_versions="$(head -n +136 .tf-versions.txt | sort -V)" # index head -n +136 rebuild
 
-    latest_versions="$(cat .tf-versions.txt | head -n +135 | sort -V)" # index head -n +135 rebuild
-    while read -r IMAGE_TAG; do
+    for alpine_version in ${alpine_versions}; do
+        export ALPINE_VERSION="${alpine_version}"
 
-        if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
-            echo "  [~] Skipping: ${IMAGE_TAG} already exists."
-            continue
-        fi
+        echo "${latest_versions}" | xargs -r -n 1 -P 4 bash -c '
+            tf_version="$1"
+            image_tag="${tf_version}-alpine${ALPINE_VERSION}"
 
-        export TF_VERSION="${IMAGE_TAG}"
-        export IMAGE_TAG="${IMAGE_TAG}"
+            if crane ls "${IMAGE_REGISTRY}/${IMAGE_NAME}" | grep -Fxq "${image_tag}"; then
+                echo "${IMAGE_REGISTRY}/${IMAGE_NAME}:${image_tag} already exists..."
+                exit 0
+            fi
 
-        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
-        docker buildx bake push
+            export TF_VERSION="${tf_version}"
+            export IMAGE_TAG="${tf_version}"
 
-    done < <(echo "${latest_versions}")
-
-    latest_version="$(cat .tf-version)"
-    export TF_VERSION="${latest_version}"
-    export IMAGE_TAG="${latest_version}"
-
-    if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
-        echo "  [~] Skipping: ${IMAGE_TAG} already exists."
-    else
-        echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
-        docker buildx bake push
-    fi
+            docker buildx bake push
+        ' _
+    done
 }
 
 "$@"
