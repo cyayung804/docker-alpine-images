@@ -6,6 +6,7 @@ echo "==> Running $(dirname "$(realpath "$0")")/build.sh"
 
 docker --version
 docker buildx version
+date="$(date -Iseconds)"
 
 function alpine()
 {
@@ -21,6 +22,7 @@ function alpine()
 
     export IMAGE_TAG="${latest_alpine_version}"
     export ALPINE_VERSION="${latest_alpine_version}"
+    export DATE="${date}"
 
     if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
         echo "  [~] Skipping: ${IMAGE_TAG} already exists."
@@ -46,6 +48,7 @@ function golang()
     export IMAGE_TAG="${latest_go_version}"
     export ALPINE_VERSION="${latest_alpine_version}"
     export GO_VERSION="${latest_go_version}"
+    export DATE="${date}"
 
     if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
         echo "  [~] Skipping: ${IMAGE_TAG} already exists."
@@ -71,6 +74,7 @@ function terraform()
     export IMAGE_TAG="${latest_tf_version}"
     export ALPINE_VERSION="${latest_alpine_version}"
     export TF_VERSION="${latest_tf_version}"
+    export DATE="${date}"
 
     if [[ "${IMAGE_TAG}" != "latest" ]] && crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
         echo "  [~] Skipping: ${IMAGE_TAG} already exists."

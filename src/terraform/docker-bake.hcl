@@ -5,6 +5,7 @@ group "default" {
 target "metadata" {
   labels = {
     "org.opencontainers.image.authors"    = "${GITHUB_REPOSITORY_OWNER}"
+    "org.opencontainers.image.created"    = "${DATE}"
     "org.opencontainers.image.os.name"    = "alpine"
     "org.opencontainers.image.os.version" = "${ALPINE_VERSION}"
     "org.opencontainers.image.ref.name"   = "${GITHUB_REF_NAME}"
@@ -16,8 +17,23 @@ target "metadata" {
   }
 }
 
+target "annotations" {
+  annotations = [
+    "index:org.opencontainers.image.authors=${GITHUB_REPOSITORY_OWNER}",
+    "index:org.opencontainers.image.created=${DATE}",
+    "index:org.opencontainers.image.os.name=alpine",
+    "index:org.opencontainers.image.os.version=${ALPINE_VERSION}",
+    "index:org.opencontainers.image.ref.name=${GITHUB_REF_NAME}",
+    "index:org.opencontainers.image.revision=${GITHUB_SHA}",
+    "index:org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}",
+    "index:org.opencontainers.image.title=${IMAGE_NAME}",
+    "index:org.opencontainers.image.url=${IMAGE_REGISTRY}/${IMAGE_NAME}",
+    "index:org.opencontainers.image.version=${IMAGE_TAG}"
+  ]
+}
+
 target "push" {
-  inherits  = ["settings", "metadata"]
+  inherits  = ["settings", "metadata", "annotations"]
   output    = ["type=registry"]
   platforms = ["linux/amd64", "linux/arm64"]
   tags = [
@@ -37,6 +53,8 @@ target "settings" {
 }
 
 variable "ALPINE_VERSION" {}
+
+variable "DATE" {}
 
 variable "GITHUB_REF_NAME" {}
 
