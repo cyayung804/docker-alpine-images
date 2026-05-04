@@ -15,7 +15,7 @@ function alpine()
     local count=0
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_minor_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
-        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
         sleep 5
     done
     echo "${latest_versions}" > .alpine-versions.txt
@@ -33,7 +33,7 @@ function golang()
     local count=0
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
-        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
         sleep 5
     done
     echo "${latest_versions}" > .go-versions.txt
@@ -51,7 +51,7 @@ function node()
     local count=0
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
-        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
         sleep 5
     done
     echo "${latest_versions}" > .node-versions.txt
@@ -69,7 +69,7 @@ function python()
     local count=0
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
-        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
         sleep 5
     done
     echo "${latest_versions}" > .python-versions.txt
@@ -87,7 +87,7 @@ function terraform()
     local count=0
     until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
         count=$((count + 1))
-        echo "     Rate limited or empty response. Retrying ($count/5)..."
+        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
         sleep 5
     done
     echo "${latest_versions}" > .tf-versions.txt

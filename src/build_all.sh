@@ -65,9 +65,55 @@ function golang()
 
             export GO_VERSION="${go_version}"
             export IMAGE_TAG="${go_version}"
-
+            echo "Building ${IMAGE_REGISTRY}/${IMAGE_NAME}:${image_tag}..."
             docker buildx bake push
         ' _
+    done
+}
+
+function python()
+{
+    local image_registry="index.docker.io/cyayung804"
+    local image_name="python"
+
+    cd "src/${image_name}" || return
+
+    export IMAGE_REGISTRY="${image_registry}"
+    export IMAGE_NAME="${image_name}"
+    export DATE="${date}"
+
+    local alpine_versions
+    local latest_versions
+
+    alpine_versions="$(sort -V .alpine-versions.txt)"
+    latest_versions="$(sort -V .python-versions.txt)" # pending
+
+    trap 'rm -rf src/**' EXIT INT TERM
+
+    for alpine_version in ${alpine_versions}; do
+        export ALPINE_VERSION="${alpine_version}"
+
+        echo "${latest_versions}" | xargs -r -n 1 -P 4 bash -c '
+            alpine_version="$1"
+            python_version="$2"
+            image_tag="${python_version}-alpine${alpine_version}"
+
+            if crane ls "${IMAGE_REGISTRY}/${IMAGE_NAME}" | grep -Fxq "${image_tag}"; then
+                echo "${IMAGE_REGISTRY}/${IMAGE_NAME}:${image_tag} already exists..."
+                exit 0
+            fi
+
+            export PYTHON_VERSION="${python_version}"
+            export IMAGE_TAG="${image_tag}"
+
+            mkdir -p "src/${alpine_version}/${python_version}"
+
+            echo "Downloading Python ${image_tag}..."
+            curl -fsSL "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz" \
+                -o "src/${alpine_version}/${python_version}/Python-${python_version}.tgz"
+            echo "Building ${IMAGE_REGISTRY}/${IMAGE_NAME}:${image_tag}..."
+            docker buildx bake push
+        ' _ "${alpine_version}"
     done
 }
 
@@ -102,7 +148,7 @@ function terraform()
 
             export TF_VERSION="${tf_version}"
             export IMAGE_TAG="${tf_version}"
-
+            echo "Building ${IMAGE_REGISTRY}/${IMAGE_NAME}:${image_tag}..."
             docker buildx bake push
         ' _
     done
