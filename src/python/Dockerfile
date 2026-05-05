@@ -32,7 +32,8 @@ RUN --mount=type=cache,target=/root/.cache \
     tar -xvf Python-${python_version}.tgz && \
     cd Python-${python_version} && \
     ./configure --enable-optimizations && \
-    make && \
+    make -j$(nproc) && \
+    make test && \
     make install
 
 FROM base AS final
