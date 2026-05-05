@@ -93,7 +93,7 @@ function python()
     for alpine_version in ${alpine_versions}; do
         export ALPINE_VERSION="${alpine_version}"
 
-        echo "${latest_versions}" | xargs -r -n 1 -P 4 bash -c '
+        echo "${latest_versions}" | xargs -r -n 4 -P 1 bash -c '
             alpine_version="$1"
             python_version="$2"
             image_tag="${python_version}-alpine${alpine_version}"
