@@ -4,7 +4,6 @@ set -e
 
 echo "==> Running $(dirname "$(realpath "$0")")/update.sh"
 
-regex_major_semver='^(0|[1-9][0-9]*)$'
 regex_minor_semver='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
 regex_patch_semver='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
 
@@ -44,42 +43,6 @@ function golang()
     cat .go-versions.txt
 }
 
-function node()
-{
-    local image_registry="public.ecr.aws/docker/library"
-    local image_name="node"
-    local count=0
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
-        count=$((count + 1))
-        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
-        sleep 5
-    done
-    echo "${latest_versions}" > .node-versions.txt
-    cat .node-versions.txt | head -n 1 > .node-version
-    echo ".node-version:"
-    cat .node-version
-    echo ".node-versions.txt:"
-    cat .node-versions.txt
-}
-
-function python()
-{
-    local image_registry="public.ecr.aws/docker/library"
-    local image_name="python"
-    local count=0
-    until latest_versions=$(crane ls "${image_registry}/${image_name}" 2>/dev/null | grep -E "${regex_patch_semver}" | sort -Vr) && [ -n "$latest_versions" ] || [ $count -eq 5 ]; do
-        count=$((count + 1))
-        echo "     Rate limited or empty dockerhub_response. Retrying ($count/5)..."
-        sleep 5
-    done
-    echo "${latest_versions}" > .python-versions.txt
-    cat .python-versions.txt | head -n 1 > .python-version
-    echo ".python-version:"
-    cat .python-version
-    echo ".python-versions.txt:"
-    cat .python-versions.txt
-}
-
 function terraform()
 {
     local image_registry="public.ecr.aws"
@@ -110,20 +73,12 @@ function run()
             alpine
             ;;
         golang)
+            alpine
             golang
-            alpine
-            ;;
-        node)
-            node
-            alpine
-            ;;
-        python)
-            python
-            alpine
             ;;
         terraform)
-            terraform
             alpine
+            terraform
             ;;
         *)
             echo "Unknown target: $target"
