@@ -23,6 +23,8 @@ function alpine()
     cat .alpine-version
     echo ".alpine-versions.txt:"
     cat .alpine-versions.txt
+    cp -f .alpine-version src/alpine/.alpine-version || exit 1
+    cp -f .alpine-versions.txt src/alpine/.alpine-versions.txt || exit 1
 }
 
 function golang()
@@ -41,6 +43,8 @@ function golang()
     cat .go-version
     echo ".go-versions.txt:"
     cat .go-versions.txt
+    cp -f .go-version src/golang/.go-version || exit 1
+    cp -f .go-versions.txt src/golang/.go-versions.txt || exit 1
 }
 
 function terraform()
@@ -59,6 +63,8 @@ function terraform()
     cat .tf-version
     echo ".tf-versions.txt:"
     cat .tf-versions.txt
+    cp -f .tf-version src/terraform/.tf-version || exit 1
+    cp -f .tf-versions.txt src/terraform/.tf-versions.txt || exit 1
 }
 
 alpine

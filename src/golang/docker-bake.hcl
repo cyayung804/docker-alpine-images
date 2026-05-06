@@ -56,9 +56,9 @@ target "settings" {
 
 variable "ALPINE_VERSION" {}
 
-variable "DATE" {}
-
 variable "GO_VERSION" {}
+
+variable "DATE" {}
 
 variable "GITHUB_REF_NAME" {}
 

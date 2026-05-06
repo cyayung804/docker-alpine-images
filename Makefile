@@ -10,7 +10,7 @@ help:
 	@echo "  make install                 - Run install.sh"
 	@echo "  make update                  - Run update.sh"
 	@echo "  make build                   - Run build.sh"
-	@echo "  make build-all               - Run build-all.sh"
+	@echo "  make build-all               - Run build_all.sh"
 
 
 install:

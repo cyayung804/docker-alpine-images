@@ -20,9 +20,9 @@ jobs:
       - name: Run bash script
         run: |
           make install
-          for dir in src/*/; do
-            make update image=$(basename "$dir")
-          done
+          make update image=alpine
+          make update image=golang
+          make update image=terraform
 
       - name: Commit and push changes
         run: |

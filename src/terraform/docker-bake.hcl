@@ -54,6 +54,8 @@ target "settings" {
 
 variable "ALPINE_VERSION" {}
 
+variable "TF_VERSION" {}
+
 variable "DATE" {}
 
 variable "GITHUB_REF_NAME" {}
@@ -71,5 +73,3 @@ variable "IMAGE_NAME" {}
 variable "IMAGE_REGISTRY" {}
 
 variable "IMAGE_TAG" {}
-
-variable "TF_VERSION" {}
