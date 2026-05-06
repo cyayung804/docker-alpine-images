@@ -4,9 +4,9 @@ set -e
 
 echo "==> Running $(dirname "$(realpath "$0")")/build_all.sh"
 
+date="$(date -Iseconds)"
 docker --version
 docker buildx version
-date="$(date -Iseconds)"
 
 function alpine()
 {
@@ -15,7 +15,7 @@ function alpine()
 
     cd "src/${image_name}" || return
 
-    latest_versions="$(cat .alpine-versions.txt | sort -V)"
+    alpine_versions="$(cat .alpine-versions.txt | sort -V)"
 
     while read -r IMAGE_TAG; do
         if crane ls "${image_registry}/${image_name}" | grep -Fxq "${IMAGE_TAG}"; then
@@ -31,7 +31,7 @@ function alpine()
 
         echo "Building ${image_registry}/${image_name}:${IMAGE_TAG}..."
         docker buildx bake push
-    done < <(echo "${latest_versions}")
+    done < <(echo "${alpine_versions}")
 }
 
 function golang()
