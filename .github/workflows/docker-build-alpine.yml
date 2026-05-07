@@ -26,7 +26,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - uses: aws-actions/configure-aws-credentials@v6.1.0
+      - uses: aws-actions/configure-aws-credentials@v6.1.1
         with:
           role-to-assume: arn:aws:iam::814808959864:role/AWSOpenIDConnectGitHubAction
           aws-region: ap-southeast-1
