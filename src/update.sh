@@ -25,6 +25,10 @@ function alpine()
     cat .alpine-versions.txt
     cp -f .alpine-version src/alpine/.alpine-version || exit 1
     cp -f .alpine-versions.txt src/alpine/.alpine-versions.txt || exit 1
+    cp -f .alpine-version src/golang/.alpine-version || exit 1
+    cp -f .alpine-versions.txt src/golang/.alpine-versions.txt || exit 1
+    cp -f .alpine-version src/terraform/.alpine-version || exit 1
+    cp -f .alpine-versions.txt src/terraform/.alpine-versions.txt || exit 1
 }
 
 function golang()
