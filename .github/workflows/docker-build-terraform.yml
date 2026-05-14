@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'src/terraform/.alpine-version'
-      - 'src/terraform/.tf-version'
+      - '.alpine-version'
+      - '.tf-version'
   workflow_dispatch:
 
 jobs:
