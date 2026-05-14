@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'src/golang/.alpine-version'
-      - 'src/golang/.go-version'
+      - '.alpine-version'
+      - '.go-version'
   workflow_dispatch:
 
 jobs:
